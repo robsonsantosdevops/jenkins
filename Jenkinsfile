@@ -1,12 +1,10 @@
-//Declarative Pipeline
-
 pipeline {
     agent any
 
     stages {
         stage('Build') {
             steps {
-                echo 'Building RBN..'
+                echo 'Building..'
             }
         }
         stage('Test') {
@@ -20,4 +18,23 @@ pipeline {
             }
         }
     }
-}
+    post {
+        success {
+            emailext(
+                subject: "${env.JOB_NAME} na build [${env.BUILD_NUMBER}] foi deployado com sucesso :D",
+                body: "Verifique a saída da console do Job ${env.JOB_NAME} em [${env.BUILD_URL}] ",
+                to: "robson.santos@ourinvest.com.br"
+            )
+        }   
+    }
+}    
+    post {
+        failure {
+           emailext(
+                subject: "${env.JOB_NAME} na build [${env.BUILD_NUMBER}] Falhou!",
+                body: "Verifique a saída da console do ${env.JOB_NAME} em [${env.BUILD_URL}] ",
+                to: "robson.santos@ourinvest.com.br"
+            )
+        }   
+    }
+}  
